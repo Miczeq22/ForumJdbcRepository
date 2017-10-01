@@ -52,4 +52,17 @@ public class UserRepositoryTest
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void findOneTest()
+	{
+		try
+		{
+			System.out.println(userRepository.findOne(1L));
+		}
+		catch(DatabaseException e)
+		{
+			e.printStackTrace();
+		}
+	}
 }

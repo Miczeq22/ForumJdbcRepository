@@ -2,6 +2,7 @@ package pl.miczeq.repository.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -91,8 +92,43 @@ public class UserRepositoryImpl implements UserRepository
 
 	public User findOne(Long id) throws DatabaseException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		
+		final String SQL = "SELECT * FROM user WHERE ID = ?";
+		
+		try
+		{
+			connection = ConnectionUtil.getConnection();
+			preparedStatement = connection.prepareStatement(SQL);
+			preparedStatement.setLong(1, id);
+			resultSet = ConnectionUtil.getResultSet(preparedStatement);
+			
+			User user = null;
+			
+			if(resultSet.next())
+			{
+				user = new User(resultSet.getLong(1), resultSet.getString(2), resultSet.getString(3));
+			}
+			
+			if(resultSet.next())
+			{
+				throw new DatabaseException("There exist more than one unique user with ID: " + id);
+			}
+			
+			return user;
+		}
+		catch(SQLException e)
+		{
+			throw new DatabaseException("Error database connection failed", e);
+		}
+		finally
+		{
+			ConnectionUtil.close(resultSet);
+			ConnectionUtil.close(preparedStatement);
+			ConnectionUtil.close(connection);
+		}
 	}
 
 	public List<User> findAll() throws DatabaseException
