@@ -175,8 +175,38 @@ public class UserRepositoryImpl implements UserRepository
 
 	public void remove(Long id) throws DatabaseException
 	{
-		// TODO Auto-generated method stub
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
 		
+		final String SQL = "DELETE FROM user WHERE ID = ?";
+		
+		try
+		{
+			connection = ConnectionUtil.getConnection();
+			preparedStatement = connection.prepareStatement(SQL);
+			preparedStatement.setLong(1, id);
+			
+			int executeUpdate = preparedStatement.executeUpdate();
+			
+			if(executeUpdate != 0)
+			{
+				System.out.println("User with ID: " + id + " have been deleted successfully");
+			}
+			else
+			{
+				throw new DatabaseException("Error while deleteing user with ID: " + id);
+			}
+			
+		}
+		catch(SQLException e)
+		{
+			throw new DatabaseException("Error database connection failed", e);
+		}
+		finally
+		{
+			ConnectionUtil.close(preparedStatement);
+			ConnectionUtil.close(connection);
+		}
 	}
 	
 	private void validateUser(User user) throws ValidationException
