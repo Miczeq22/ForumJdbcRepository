@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import pl.miczeq.exception.DatabaseException;
@@ -133,8 +135,42 @@ public class UserRepositoryImpl implements UserRepository
 
 	public List<User> findAll() throws DatabaseException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		
+		final String SQL = "SELECT * FROM user";
+		
+		try
+		{
+			connection = ConnectionUtil.getConnection();
+			statement = connection.createStatement();
+			resultSet = ConnectionUtil.getResultSet(statement, SQL);
+			
+			List<User> users = new ArrayList<User>();
+			
+			while(resultSet.next())
+			{
+				users.add(new User(resultSet.getLong(1), resultSet.getString(2), resultSet.getString(3)));
+			}
+			
+			if(resultSet.next())
+			{
+				throw new DatabaseException("There exist more than one unique user");
+			}
+			
+			return users;
+		}
+		catch(SQLException e)
+		{
+			throw new DatabaseException("Error database connection failed", e);
+		}
+		finally
+		{
+			ConnectionUtil.close(resultSet);
+			ConnectionUtil.close(statement);
+			ConnectionUtil.close(connection);
+		}
 	}
 
 	public void remove(Long id) throws DatabaseException

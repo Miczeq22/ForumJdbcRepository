@@ -24,7 +24,7 @@ public class UserRepositoryTest
 	{
 		try
 		{
-			userRepository.save(new User("admin", "admin"));
+			userRepository.save(new User("user", "user"));
 		}
 		catch(DatabaseException e)
 		{
@@ -59,6 +59,19 @@ public class UserRepositoryTest
 		try
 		{
 			System.out.println(userRepository.findOne(1L));
+		}
+		catch(DatabaseException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void findAllTest()
+	{
+		try
+		{
+			userRepository.findAll().forEach(user -> System.out.println(user));
 		}
 		catch(DatabaseException e)
 		{
