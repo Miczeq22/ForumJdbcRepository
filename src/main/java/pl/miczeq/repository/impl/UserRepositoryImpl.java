@@ -53,8 +53,40 @@ public class UserRepositoryImpl implements UserRepository
 
 	public void update(Long id, User user) throws DatabaseException, ValidationException
 	{
-		// TODO Auto-generated method stub
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		final String SQL = "UPDATE user SET LOGIN = ?, PASSWORD = ? WHERE ID = ?";
 		
+		try
+		{
+			validateUser(user);
+			
+			connection = ConnectionUtil.getConnection();
+			preparedStatement = connection.prepareStatement(SQL);
+			preparedStatement.setString(1, user.getLogin());
+			preparedStatement.setString(2, user.getPassword());
+			preparedStatement.setLong(3, id);
+			
+			int executeQuery = preparedStatement.executeUpdate();
+			
+			if(executeQuery != 0)
+			{
+				System.out.println("User with ID: " + id + " updated successfully!");
+			}
+			else
+			{
+				throw new DatabaseException("Error while updating user with ID: " + id + ", SQL: " + SQL);
+			}
+		}
+		catch(SQLException e)
+		{
+			throw new DatabaseException("Error database connection failed", e);
+		}
+		finally
+		{
+			ConnectionUtil.close(preparedStatement);
+			ConnectionUtil.close(connection);
+		}
 	}
 
 	public User findOne(Long id) throws DatabaseException

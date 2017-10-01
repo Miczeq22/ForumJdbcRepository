@@ -35,4 +35,21 @@ public class UserRepositoryTest
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void updateTest()
+	{
+		try
+		{
+			userRepository.update(1L, new User("admin", "admin"));
+		}
+		catch(DatabaseException e)
+		{
+			e.printStackTrace();
+		}
+		catch(ValidationException e)
+		{
+			e.printStackTrace();
+		}
+	}
 }
