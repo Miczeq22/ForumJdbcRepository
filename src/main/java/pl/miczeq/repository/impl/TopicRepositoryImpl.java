@@ -27,6 +27,8 @@ public class TopicRepositoryImpl implements TopicRepository
 		
 		try
 		{
+			validateTopic(topic);
+			
 			connection = ConnectionUtil.getConnection();
 			preparedStatement = connection.prepareStatement(SQL);
 			preparedStatement.setString(1, topic.getName());
@@ -65,6 +67,8 @@ public class TopicRepositoryImpl implements TopicRepository
 		
 		try
 		{
+			validateTopic(topic);
+			
 			connection = ConnectionUtil.getConnection();
 			preparedStatement = connection.prepareStatement(SQL);
 			preparedStatement.setString(1, topic.getName());
@@ -214,6 +218,24 @@ public class TopicRepositoryImpl implements TopicRepository
 		{
 			ConnectionUtil.close(preparedStatement);
 			ConnectionUtil.close(connection);
+		}
+	}
+	
+	private void validateTopic(Topic topic) throws ValidationException
+	{
+		if(topic.getName().isEmpty() || topic.getName().length() > 30 || topic.getName().length() < 3)
+		{
+			throw new ValidationException("Topic name length must be greater than 3 and lower than 30");
+		}
+		
+		if(topic.getContent().isEmpty())
+		{
+			throw new ValidationException("Topic content cant be empty");
+		}
+		
+		if(topic.getUserId() == null)
+		{
+			throw new ValidationException("Topic must have a user");
 		}
 	}
 }
