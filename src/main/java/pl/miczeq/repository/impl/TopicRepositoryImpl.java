@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import pl.miczeq.exception.DatabaseException;
@@ -139,14 +141,79 @@ public class TopicRepositoryImpl implements TopicRepository
 	@Override
 	public List<Topic> findAll() throws DatabaseException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		
+		final String SQL = "SELECT * FROM topic";
+		
+		try
+		{
+			connection = ConnectionUtil.getConnection();
+			statement = connection.createStatement();
+			
+			resultSet = ConnectionUtil.getResultSet(statement, SQL);
+			
+			List<Topic> topics = new ArrayList<>();
+			
+			while(resultSet.next())
+			{
+				topics.add(new Topic(resultSet.getLong(1), resultSet.getString(2), resultSet.getString(3), resultSet.getLong(4)));
+			}
+			
+			if(resultSet.next())
+			{
+				throw new DatabaseException("There exist more than one unique topic in database");
+			}
+			
+			return topics;
+			
+		}
+		catch(SQLException e)
+		{
+			throw new DatabaseException("Error database connection failed", e);
+		}
+		finally
+		{
+			ConnectionUtil.close(resultSet);
+			ConnectionUtil.close(statement);
+			ConnectionUtil.close(connection);
+		}
 	}
 
 	@Override
-	public void delete(Long id) throws DatabaseException
+	public void remove(Long id) throws DatabaseException
 	{
-		// TODO Auto-generated method stub
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
 		
+		final String SQL = "DELETE FROM topic WHERE ID = ?";
+		
+		try
+		{
+			connection = ConnectionUtil.getConnection();
+			preparedStatement = connection.prepareStatement(SQL);
+			preparedStatement.setLong(1, id);
+			
+			int executeQuery = preparedStatement.executeUpdate();
+			
+			if(executeQuery != 0)
+			{
+				System.out.println("Topic with ID: " + id + " have been deleted successfully");
+			}
+			else
+			{
+				throw new DatabaseException("Error while deleteing topic with ID: " + id);
+			}
+		}
+		catch(SQLException e)
+		{
+			throw new DatabaseException("Error database connection failed", e);
+		}
+		finally
+		{
+			ConnectionUtil.close(preparedStatement);
+			ConnectionUtil.close(connection);
+		}
 	}
 }

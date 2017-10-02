@@ -16,5 +16,5 @@ public interface TopicRepository
 	
 	List<Topic> findAll() throws DatabaseException;
 	
-	void delete(Long id) throws DatabaseException;
+	void remove(Long id) throws DatabaseException;
 }

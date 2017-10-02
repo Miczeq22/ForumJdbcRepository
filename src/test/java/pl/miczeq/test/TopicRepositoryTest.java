@@ -24,7 +24,7 @@ public class TopicRepositoryTest
 	{
 		try
 		{
-			topicRepository.save(new Topic("Test topic", "Some content...", 1L));
+			topicRepository.save(new Topic("Test topic 2", "Some content... 2", 2L));
 		}
 		catch(DatabaseException e)
 		{
@@ -59,6 +59,32 @@ public class TopicRepositoryTest
 		try
 		{
 			System.out.println(topicRepository.findOne(1L));
+		}
+		catch(DatabaseException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void findAllTest()
+	{
+		try
+		{
+			topicRepository.findAll().forEach(topic -> System.out.println(topic));
+		}
+		catch(DatabaseException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void removeTest()
+	{
+		try
+		{
+			topicRepository.remove(2L);
 		}
 		catch(DatabaseException e)
 		{
