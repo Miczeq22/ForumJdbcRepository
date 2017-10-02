@@ -58,8 +58,43 @@ public class CommentRepositoryImpl implements CommentRepository
 	@Override
 	public void update(Long id, Comment comment) throws DatabaseException, ValidationException
 	{
-		// TODO Auto-generated method stub
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
 		
+		final String SQL = "UPDATE comment SET USER_ID = ?, TOPIC_ID = ?, CONTENT = ?, LIKES = ? WHERE ID = ?";
+		
+		try
+		{
+			validateComment(comment);
+			
+			connection = ConnectionUtil.getConnection();
+			preparedStatement = connection.prepareStatement(SQL);
+			preparedStatement.setLong(1, comment.getUserId());
+			preparedStatement.setLong(2, comment.getTopicId());
+			preparedStatement.setString(3, comment.getContent());
+			preparedStatement.setInt(4, comment.getLikes());
+			preparedStatement.setLong(5, id);
+			
+			int executeQuery = preparedStatement.executeUpdate();
+			
+			if(executeQuery != 0)
+			{
+				System.out.println("Comment with ID: " + id + " updated successfully!");
+			}
+			else
+			{
+				throw new DatabaseException("Error while updating comment with ID: " + id + ", SQL: " + SQL);
+			}
+		}
+		catch(SQLException e)
+		{
+			throw new DatabaseException("Error database connection failed", e);
+		}
+		finally
+		{
+			ConnectionUtil.close(preparedStatement);
+			ConnectionUtil.close(connection);
+		}
 	}
 
 	@Override

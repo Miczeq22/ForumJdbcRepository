@@ -35,4 +35,21 @@ public class CommentRepositoryTest
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void updateTest()
+	{
+		try
+		{
+			commentRepository.update(1L, new Comment("Some Test Comment...", 1L, 1L, 1));
+		}
+		catch(DatabaseException e)
+		{
+			e.printStackTrace();
+		}
+		catch(ValidationException e)
+		{
+			e.printStackTrace();
+		}
+	}
 }
