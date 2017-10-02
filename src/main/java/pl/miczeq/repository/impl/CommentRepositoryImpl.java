@@ -133,7 +133,7 @@ public class CommentRepositoryImpl implements CommentRepository
 		}
 		catch(SQLException e)
 		{
-			throw new DatabaseException("Error database connection failded", e);
+			throw new DatabaseException("Error database connection failed", e);
 		}
 		finally
 		{
@@ -175,7 +175,7 @@ public class CommentRepositoryImpl implements CommentRepository
 		}
 		catch(SQLException e)
 		{
-			throw new DatabaseException("Error database connection failded", e);
+			throw new DatabaseException("Error database connection failed", e);
 		}
 		finally
 		{
@@ -218,7 +218,7 @@ public class CommentRepositoryImpl implements CommentRepository
 		}
 		catch(SQLException e)
 		{
-			throw new DatabaseException("Error database connection failded", e);
+			throw new DatabaseException("Error database connection failed", e);
 		}
 		finally
 		{
@@ -231,8 +231,37 @@ public class CommentRepositoryImpl implements CommentRepository
 	@Override
 	public void remove(Long id) throws DatabaseException
 	{
-		// TODO Auto-generated method stub
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
 		
+		final String SQL = "DELETE FROM comment WHERE ID = ?";
+		
+		try
+		{
+			connection = ConnectionUtil.getConnection();
+			preparedStatement = connection.prepareStatement(SQL);
+			preparedStatement.setLong(1, id);
+			
+			int executeUpdate = preparedStatement.executeUpdate();
+			
+			if(executeUpdate != 0)
+			{
+				System.out.println("Comment with ID: " + id + " deleted successfully!");
+			}
+			else
+			{
+				throw new DatabaseException("Error while deleting comment with ID: " + id);
+			}
+		}
+		catch(SQLException e)
+		{
+			throw new DatabaseException("Error database connection failed", e);
+		}
+		finally
+		{
+			ConnectionUtil.close(preparedStatement);
+			ConnectionUtil.close(connection);
+		}
 	}
 	
 	private void validateComment(Comment comment) throws ValidationException

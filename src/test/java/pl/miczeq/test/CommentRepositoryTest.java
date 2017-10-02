@@ -24,7 +24,7 @@ public class CommentRepositoryTest
 	{
 		try
 		{
-			commentRepository.save(new Comment("Some test comment 3", 4L, 2L, 0));
+			commentRepository.save(new Comment("Some test comment 5", 4L, 2L, 0));
 		}
 		catch(DatabaseException e)
 		{
@@ -85,6 +85,19 @@ public class CommentRepositoryTest
 		try
 		{
 			commentRepository.findAllByTopicId(1L).forEach(comment -> System.out.println(comment));
+		}
+		catch(DatabaseException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void removeTest()
+	{
+		try
+		{
+			commentRepository.remove(6L);
 		}
 		catch(DatabaseException e)
 		{
