@@ -188,8 +188,44 @@ public class CommentRepositoryImpl implements CommentRepository
 	@Override
 	public List<Comment> findAllByTopicId(Long id) throws DatabaseException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		
+		final String SQL = "SELECT * FROM comment WHERE TOPIC_ID = ?";
+		
+		try
+		{
+			connection = ConnectionUtil.getConnection();
+			preparedStatement = connection.prepareStatement(SQL);
+			preparedStatement.setLong(1, id);
+			
+			resultSet = ConnectionUtil.getResultSet(preparedStatement);
+			
+			List<Comment> comments = new ArrayList<>();
+			
+			while(resultSet.next())
+			{
+				comments.add(new Comment(resultSet.getLong(1), resultSet.getString(4), resultSet.getLong(3), resultSet.getLong(2), resultSet.getInt(5)));
+			}
+			
+			if(resultSet.next())
+			{
+				throw new DatabaseException("There exist more than one unique comment in database");
+			}
+			
+			return comments;
+		}
+		catch(SQLException e)
+		{
+			throw new DatabaseException("Error database connection failded", e);
+		}
+		finally
+		{
+			ConnectionUtil.close(resultSet);
+			ConnectionUtil.close(preparedStatement);
+			ConnectionUtil.close(connection);
+		}
 	}
 
 	@Override

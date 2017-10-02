@@ -24,7 +24,7 @@ public class CommentRepositoryTest
 	{
 		try
 		{
-			commentRepository.save(new Comment("Some test comment 2", 1L, 2L, 0));
+			commentRepository.save(new Comment("Some test comment 3", 4L, 2L, 0));
 		}
 		catch(DatabaseException e)
 		{
@@ -72,6 +72,19 @@ public class CommentRepositoryTest
 		try
 		{
 			commentRepository.findAll().forEach(comment -> System.out.println(comment));
+		}
+		catch(DatabaseException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void findAllByTopicIdTest()
+	{
+		try
+		{
+			commentRepository.findAllByTopicId(1L).forEach(comment -> System.out.println(comment));
 		}
 		catch(DatabaseException e)
 		{
