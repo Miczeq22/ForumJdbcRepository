@@ -24,7 +24,7 @@ public class CommentRepositoryTest
 	{
 		try
 		{
-			commentRepository.save(new Comment("Some test comment", 1L, 1L, 0));
+			commentRepository.save(new Comment("Some test comment 2", 1L, 2L, 0));
 		}
 		catch(DatabaseException e)
 		{
@@ -48,6 +48,32 @@ public class CommentRepositoryTest
 			e.printStackTrace();
 		}
 		catch(ValidationException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void findOneTest()
+	{
+		try
+		{
+			System.out.println(commentRepository.findOne(1L));
+		}
+		catch(DatabaseException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void findAllTest()
+	{
+		try
+		{
+			commentRepository.findAll().forEach(comment -> System.out.println(comment));
+		}
+		catch(DatabaseException e)
 		{
 			e.printStackTrace();
 		}

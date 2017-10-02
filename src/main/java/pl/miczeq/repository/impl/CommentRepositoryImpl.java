@@ -2,7 +2,10 @@ package pl.miczeq.repository.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import pl.miczeq.exception.DatabaseException;
@@ -100,15 +103,86 @@ public class CommentRepositoryImpl implements CommentRepository
 	@Override
 	public Comment findOne(Long id) throws DatabaseException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		
+		final String SQL = "SELECT * FROM comment WHERE ID = ?";
+		
+		try
+		{
+			connection = ConnectionUtil.getConnection();
+			preparedStatement = connection.prepareStatement(SQL);
+			preparedStatement.setLong(1, id);
+			
+			resultSet = ConnectionUtil.getResultSet(preparedStatement);
+			
+			Comment comment = null;
+			
+			if(resultSet.next())
+			{
+				comment = new Comment(resultSet.getLong(1), resultSet.getString(4), resultSet.getLong(3), resultSet.getLong(2), resultSet.getInt(5));
+			}
+			
+			if(resultSet.next())
+			{
+				throw new DatabaseException("There exist more than one unique comment with ID: " + id);
+			}
+			
+			return comment;
+		}
+		catch(SQLException e)
+		{
+			throw new DatabaseException("Error database connection failded", e);
+		}
+		finally
+		{
+			ConnectionUtil.close(resultSet);
+			ConnectionUtil.close(preparedStatement);
+			ConnectionUtil.close(connection);
+		}
 	}
 
 	@Override
 	public List<Comment> findAll() throws DatabaseException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		
+		final String SQL = "SELECT * FROM comment";
+		
+		try
+		{
+			connection = ConnectionUtil.getConnection();
+			statement = connection.createStatement();
+			
+			resultSet = ConnectionUtil.getResultSet(statement, SQL);
+			
+			List<Comment> comments = new ArrayList<>();
+			
+			while(resultSet.next())
+			{
+				comments.add(new Comment(resultSet.getLong(1), resultSet.getString(4), resultSet.getLong(3), resultSet.getLong(2), resultSet.getInt(5)));
+			}
+			
+			if(resultSet.next())
+			{
+				throw new DatabaseException("There exist more than one unique comment in database");
+			}
+			
+			return comments;
+		}
+		catch(SQLException e)
+		{
+			throw new DatabaseException("Error database connection failded", e);
+		}
+		finally
+		{
+			ConnectionUtil.close(resultSet);
+			ConnectionUtil.close(statement);
+			ConnectionUtil.close(connection);
+		}
 	}
 
 	@Override
