@@ -14,6 +14,8 @@ public interface UserRepository
 	
 	User findOne(Long id) throws DatabaseException;
 	
+	User findOneByTopicId(Long id) throws DatabaseException;
+	
 	List<User> findAll() throws DatabaseException;
 	
 	void remove(Long id) throws DatabaseException;

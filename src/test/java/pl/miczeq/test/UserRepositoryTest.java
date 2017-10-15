@@ -3,8 +3,8 @@ package pl.miczeq.test;
 import org.junit.Before;
 import org.junit.Test;
 
-import pl.miczeq.exception.ValidationException;
 import pl.miczeq.exception.DatabaseException;
+import pl.miczeq.exception.ValidationException;
 import pl.miczeq.model.User;
 import pl.miczeq.repository.UserRepository;
 import pl.miczeq.repository.impl.UserRepositoryImpl;
@@ -24,7 +24,7 @@ public class UserRepositoryTest
 	{
 		try
 		{
-			userRepository.save(new User("test", "test"));
+			userRepository.save(new User("jan", "jan123"));
 		}
 		catch(DatabaseException e)
 		{
@@ -41,7 +41,7 @@ public class UserRepositoryTest
 	{
 		try
 		{
-			userRepository.update(1L, new User("admin", "admin"));
+			userRepository.update(3L, new User("Jan", "jan123"));
 		}
 		catch(DatabaseException e)
 		{
@@ -72,8 +72,7 @@ public class UserRepositoryTest
 		try
 		{
 			userRepository.findAll().forEach(user -> System.out.println(user));
-		}
-		catch(DatabaseException e)
+		} catch (DatabaseException e)
 		{
 			e.printStackTrace();
 		}

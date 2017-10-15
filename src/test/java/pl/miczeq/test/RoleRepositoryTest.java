@@ -35,4 +35,43 @@ public class RoleRepositoryTest
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void updateTest()
+	{
+		try
+		{
+			roleRepository.update(3L, new Role("SuperAdmin", 1L));
+		}
+		catch(DatabaseException | ValidationException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void findOneTest()
+	{
+		try
+		{
+			System.out.println(roleRepository.findOne(1L));
+		}
+		catch(DatabaseException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void findAllTest()
+	{
+		try
+		{
+			roleRepository.findAll().forEach(role -> System.out.println(role));
+		}
+		catch(DatabaseException e)
+		{
+			e.printStackTrace();
+		}
+	}
 }

@@ -21,6 +21,8 @@ public class Topic
 		this.content = content;
 		this.userId = userId;
 	}
+	
+	public Topic() {}
 
 	public Long getId()
 	{

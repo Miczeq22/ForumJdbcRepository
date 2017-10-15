@@ -133,6 +133,48 @@ public class UserRepositoryImpl implements UserRepository
 		}
 	}
 
+	@Override
+	public User findOneByTopicId(Long id) throws DatabaseException
+	{
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		
+		final String SQL = "SELECT u.ID, u.LOGIN, u.PASSWORD FROM user u INNER JOIN topic t ON (u.ID = t.USER_ID) WHERE u.ID = ?";
+		
+		try
+		{
+			connection = ConnectionUtil.getConnection();
+			preparedStatement = connection.prepareStatement(SQL);
+			preparedStatement.setLong(1, id);
+			resultSet = ConnectionUtil.getResultSet(preparedStatement);
+			
+			User user = null;
+			
+			if(resultSet.next())
+			{
+				user = new User(resultSet.getLong(1), resultSet.getString(2), resultSet.getString(3));
+			}
+			
+			if(resultSet.next())
+			{
+				throw new DatabaseException("There exist more than one unique user with ID: " + id);
+			}
+			
+			return user;
+		}
+		catch(SQLException e)
+		{
+			throw new DatabaseException("Error database connection failed", e);
+		}
+		finally
+		{
+			ConnectionUtil.close(resultSet);
+			ConnectionUtil.close(preparedStatement);
+			ConnectionUtil.close(connection);
+		}
+	}
+
 	public List<User> findAll() throws DatabaseException
 	{
 		Connection connection = null;
